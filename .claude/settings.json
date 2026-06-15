@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Read project files",
+      "Read .env files"
+    ],
+    "deny": [
+      "Delete source files without confirmation",
+      "Push to remote repositories",
+      "Install global packages",
+      "Run playwright tests",
+      "Run maven commands",
+      "Execute shell commands for testing"
+    ]
+  }
+}
