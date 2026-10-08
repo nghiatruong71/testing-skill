@@ -1,13 +1,13 @@
 ---
 name: jira_integration
-description: Skill tích hợp Jira/Xray — lấy requirements từ Jira, xác thực Xray, và đẩy kết quả test lên Xray Cloud/Server.
+description: Tích hợp Jira/Xray qua script Node.js — lấy requirements/user story từ Jira, xác thực Xray, đẩy kết quả test lên Xray Cloud/Server. Dùng khi user yêu cầu "lấy requirement từ Jira", "fetch jira ticket", "đẩy kết quả lên Xray", "test kết nối Jira".
 ---
 
 # Jira & Xray Integration Skill
 
 ## Mô tả
 
-Skill này cung cấp khả năng tích hợp giữa Antigravity Testing Kit với hệ thống Jira và Xray để:
+Skill này cung cấp khả năng tích hợp giữa Claude Testing Kit với hệ thống Jira và Xray để:
 
 1. **Lấy Requirements/User Stories** từ Jira → chuyển thành tài liệu yêu cầu chuẩn
 2. **Xác thực Xray** (Cloud hoặc Server/Data Center)
@@ -81,7 +81,7 @@ cp .env.example .env
 
 1. Đăng nhập vào [https://id.atlassian.com/manage-profile/security/api-tokens](https://id.atlassian.com/manage-profile/security/api-tokens)
 2. Nhấn **Create API token**
-3. Đặt label (VD: "Antigravity Automation")
+3. Đặt label (VD: "Claude Testing Kit")
 4. Copy token → dán vào `JIRA_API_TOKEN` trong file `.env`
 
 ### 4. Cách lấy Xray Cloud API Key

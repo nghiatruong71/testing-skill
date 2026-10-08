@@ -39,7 +39,7 @@ claude-testing-kit/
 |---------|--------|
 | `commands/` | Chứa 8 lệnh như `/generate_manual_testcases_rbt`, `/generate_testcases_from_requirements`, `/generate_requirements_from_website`, `/analyze_requirement_document`... |
 | `rules/` | Quy tắc kiểm thử: quy chuẩn thiết kế test case (`testcase_design_rules.md`) và phương pháp phân tích yêu cầu (`requirements_analysis_rules.md`). |
-| `skills/` | Các skill chuyên dụng: `rbt_manual_testing`, `requirements_analyzer`, `test_data_generator`, `jira_integration`. |
+| `skills/` | Các skill chuyên dụng: `rbt_manual_testing`, `requirements_analyzer`, `test_data_generator`, `jira_integration`, `design_analyzer`. |
 | `settings.json` | Phân quyền bảo mật cho AI Agent khi hoạt động trong workspace. |
 
 ---

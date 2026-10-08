@@ -1,6 +1,6 @@
 ---
 name: jira_integration
-description: Skill tích hợp Jira/Xray — lấy requirements từ Jira, xác thực Xray, và đẩy kết quả test lên Xray Cloud/Server.
+description: Tích hợp Jira/Xray qua script Node.js — lấy requirements/user story từ Jira, xác thực Xray, đẩy kết quả test lên Xray Cloud/Server. Dùng khi user yêu cầu "lấy requirement từ Jira", "fetch jira ticket", "đẩy kết quả lên Xray", "test kết nối Jira".
 ---
 
 # Jira & Xray Integration Skill

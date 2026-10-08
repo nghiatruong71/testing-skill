@@ -75,6 +75,9 @@ Agent sử dụng các skills chuyên biệt trong `.claude/skills/` tùy theo n
 | `requirements_analyzer` | Phân tích requirements sâu từ website/tài liệu nghiệp vụ. |
 | `test_data_generator` | Sinh test data phong phú, có cấu trúc rõ ràng. |
 | `jira_integration` | Kết nối lấy yêu cầu hoặc đẩy kết quả kiểm thử lên Jira/Xray. |
+| `log_bug` | Báo cáo lỗi (Bug Reporting) chuyên nghiệp lên Jira/Xray hoặc xuất mẫu Markdown. |
+| `design_analyzer` | Phân tích thiết kế (Figma, mockup, screenshot) để trích xuất UI/UX spec và phát hiện rủi ro thiết kế. |
+| `testcase_reviewer` | Rà soát bộ test cases theo Definition of Done (lint tự động + review nghiệp vụ) trước khi bàn giao/import Xray. |
 
 ## 6. Kế Hoạch Kiểm Thử (Plan Templates)
 
@@ -101,6 +104,7 @@ Các bộ prompt template sẵn dùng trong `plans/`:
 | Gộp validation nhiều trường vào 1 test case | Tách biệt validation cho từng trường |
 | Thiếu kịch bản Negative/Boundary | Luôn bao phủ các trường hợp biên và dữ liệu sai |
 | Dùng placeholder test data chung chung | Sinh test data thực tế và cụ thể |
+| Bỏ qua vòng đời/trạng thái của thực thể động phụ thuộc (như Event, Campaign, Promo) | Luôn đặt câu hỏi và thiết kế kịch bản cho trạng thái không active, chưa bắt đầu hoặc kết thúc giữa chừng |
 
 ## 9. Tham Chiếu Workflows (Slash Commands)
 
@@ -116,3 +120,35 @@ Agent sử dụng các workflows trong `.claude/commands/` qua slash commands:
 | `/generate_test_data` | Sinh test data có cấu trúc phục vụ manual test |
 | `/fetch_jira_requirements` | Lấy requirements/user stories từ Jira |
 | `/import_test_results_xray` | Đẩy kết quả test lên Xray |
+| `/log_bug` | Báo cáo lỗi (Bug Reporting) và tự động tạo ticket/bug lên Jira |
+| `/review_testcases` | Rà soát bộ test cases theo DoD, xuất báo cáo và đề xuất sửa |
+
+## 10. Scripts Hỗ Trợ
+
+| Script | Mục đích |
+|--------|----------|
+| `python3 scripts/testcases/lint_testcases.py <file.md>` | Lint test cases theo DoD (TC ID, đánh số, placeholder, cột thiếu, phụ thuộc TC) |
+| `python3 scripts/testcases/md_to_xray_csv.py <file.md>` | Xuất bảng test cases Markdown sang CSV import Xray / mở bằng Excel |
+
+## 11. Thư Mục Output
+
+Mọi file do Agent sinh ra **bắt buộc** lưu trong `output/<module>/<YYYY-MM-DD>/`:
+- `<module>`: viết thường, snake_case (ví dụ: `login`, `customer_management`).
+- `<YYYY-MM-DD>`: ngày tạo file (ví dụ: `2026-10-03`).
+- Không lưu file output ở thư mục gốc. Thư mục `output/` đã được `.gitignore` — không commit.
+- Trùng tên file trong cùng ngày → **hỏi user** ghi đè hay lưu bản mới với hậu tố `_v2`, `_v3`... (ví dụ: `test_cases_login_v2.md`).
+
+| Loại output | Đường dẫn |
+|-------------|-----------|
+| Phân tích tài liệu yêu cầu | `output/<module>/<YYYY-MM-DD>/requirement_analysis_<module>.md` |
+| Requirements từ website | `output/<module>/<YYYY-MM-DD>/requirements_spec.md` |
+| Phân tích thiết kế | `output/<module>/<YYYY-MM-DD>/design_analysis_<feature>.md` |
+| Test cases | `output/<module>/<YYYY-MM-DD>/test_cases_<module>.md` |
+| CSV import Xray / Excel | `output/<module>/<YYYY-MM-DD>/test_cases_<module>_xray.csv` |
+| Báo cáo review test cases | `output/<module>/<YYYY-MM-DD>/review_test_cases_<module>.md` |
+| Test data | `output/<module>/<YYYY-MM-DD>/test_data_<module>.json` (hoặc `.csv` / `.md`) |
+| Bug report | `output/<module>/<YYYY-MM-DD>/bugs/bug_<mô_tả_ngắn>_<timestamp>.md` |
+| Test plan / Cross-module | `output/<feature>/<YYYY-MM-DD>/test_plan.md`, `output/<feature>/<YYYY-MM-DD>/cross_module_test_plan_<feature>.md` |
+| Hình ảnh đính kèm | `output/<module>/<YYYY-MM-DD>/assets/` |
+
+Ví dụ yêu cầu "viết test case cho Đăng nhập" → `output/login/2026-10-03/test_cases_login.md` + `output/login/2026-10-03/test_cases_login_xray.csv`.

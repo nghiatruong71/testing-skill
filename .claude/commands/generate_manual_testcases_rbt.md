@@ -64,10 +64,11 @@ Thực hiện theo hướng dẫn chi tiết trong skill `rbt_manual_testing` �
 1. Đóng gói toàn bộ test cases vào bảng Markdown chuẩn:
    `| TC ID | Module | Risk Level | Test Title | Pre-Condition | Test Steps | Expected Result | Priority | Test Data |`
 2. Không được bỏ sót test case nào
-3. Xuất dưới dạng Artifact nếu dài
+3. Lưu file `output/<module>/<YYYY-MM-DD>/test_cases_<module>.md`, chạy lint + xuất CSV (mục *Kiểm tra & Xuất file* trong skill `rbt_manual_testing`)
 
 ## Output
 
-- Bảng Test Cases Markdown hoàn chỉnh, sẵn sàng copy sang Excel/Jira/TestRail
+- `output/<module>/<YYYY-MM-DD>/test_cases_<module>.md` — Bảng Test Cases hoàn chỉnh (0 lỗi lint)
+- `output/<module>/<YYYY-MM-DD>/test_cases_<module>_xray.csv` — File import Xray / mở bằng Excel
 - Traceability Matrix
 - Danh sách Ambiguities đã giải quyết

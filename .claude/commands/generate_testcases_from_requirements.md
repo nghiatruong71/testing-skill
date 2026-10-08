@@ -40,7 +40,8 @@ Workflow này sử dụng **Mode QUICK** của skill `rbt_manual_testing` để 
    - Expected Results (đánh số tương ứng)
    - Test Data (**phải cụ thể**, không placeholder)
    - Priority (Critical / High / Medium / Low)
-6. **Xuất ra bảng Markdown chuẩn**
+6. **Xuất ra bảng Markdown chuẩn**, lưu file `output/<module>/<YYYY-MM-DD>/test_cases_<module>.md`
+7. **Chạy lint + xuất CSV** (mục *Kiểm tra & Xuất file* trong skill `rbt_manual_testing`) → `output/<module>/<YYYY-MM-DD>/test_cases_<module>_xray.csv`
 
 ## Bảng Output
 

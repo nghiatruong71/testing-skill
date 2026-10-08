@@ -231,9 +231,9 @@ Agent hỗ trợ **3 chiến lược** — user chọn hoặc agent đề xuất
 
 > Đây là **checkpoint DUY NHẤT** — agent dừng ở đây chờ user xác nhận.
 
-1. **Sinh artifact chính:**
+1. **Sinh file chính:**
 
-   **File: `cross_module_test_plan_<feature>.md`**
+   **File: `output/<feature>/<YYYY-MM-DD>/cross_module_test_plan_<feature>.md`**
    - Module Inventory (Bước 1)
    - Dependencies Matrix (Bước 2)
    - Dimension Catalog + Constraints (Bước 2)
@@ -323,4 +323,4 @@ Agent hỗ trợ **3 chiến lược** — user chọn hoặc agent đề xuất
 - [ ] **(Pairwise)** Đã sinh và chạy script — KHÔNG tính thủ công
 - [ ] Ma trận chỉ chứa bộ kết hợp hợp lệ (đã loại constraints)
 - [ ] User đã xác nhận ma trận tại Bước 4
-- [ ] Artifact output đã lưu đúng vị trí project
+- [ ] File output đã lưu trong `output/<feature>/<YYYY-MM-DD>/`

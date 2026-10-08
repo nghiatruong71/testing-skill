@@ -38,4 +38,4 @@ Workflow này giúp bạn phân tích một module hoặc trang web được cun
 5. **Trình bày và Cung cấp (Review & Delivery):**
    - Định dạng tài liệu bằng Markdown rõ ràng.
    - Trình bày toàn bộ nội dung bằng **Tiếng Việt** có dấu rõ ràng, chuyên nghiệp và dễ hiểu.
-   - Sử dụng tính năng Artifact nếu tài liệu dài để người dùng tiện lưu trữ hoặc xuất file.
+   - Lưu tài liệu vào file `output/<module>/<YYYY-MM-DD>/requirements_spec.md`.

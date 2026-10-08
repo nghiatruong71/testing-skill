@@ -75,6 +75,8 @@ Agent sử dụng các skills chuyên biệt trong `.claude/skills/` tùy theo n
 | `requirements_analyzer` | Phân tích requirements sâu từ website/tài liệu nghiệp vụ. |
 | `test_data_generator` | Sinh test data phong phú, có cấu trúc rõ ràng. |
 | `jira_integration` | Kết nối lấy yêu cầu hoặc đẩy kết quả kiểm thử lên Jira/Xray. |
+| `log_bug` | Báo cáo lỗi (Bug Reporting) chuyên nghiệp lên Jira/Xray hoặc xuất mẫu Markdown. |
+| `design_analyzer` | Phân tích thiết kế (Figma, mockup, screenshot) để trích xuất UI/UX spec và phát hiện rủi ro thiết kế. |
 
 ## 6. Kế Hoạch Kiểm Thử (Plan Templates)
 
@@ -101,6 +103,7 @@ Các bộ prompt template sẵn dùng trong `plans/`:
 | Gộp validation nhiều trường vào 1 test case | Tách biệt validation cho từng trường |
 | Thiếu kịch bản Negative/Boundary | Luôn bao phủ các trường hợp biên và dữ liệu sai |
 | Dùng placeholder test data chung chung | Sinh test data thực tế và cụ thể |
+| Bỏ qua vòng đời/trạng thái của thực thể động phụ thuộc (như Event, Campaign, Promo) | Luôn đặt câu hỏi và thiết kế kịch bản cho trạng thái không active, chưa bắt đầu hoặc kết thúc giữa chừng |
 
 ## 9. Tham Chiếu Workflows (Slash Commands)
 
@@ -116,3 +119,4 @@ Agent sử dụng các workflows trong `.claude/commands/` qua slash commands:
 | `/generate_test_data` | Sinh test data có cấu trúc phục vụ manual test |
 | `/fetch_jira_requirements` | Lấy requirements/user stories từ Jira |
 | `/import_test_results_xray` | Đẩy kết quả test lên Xray |
+| `/log_bug` | Báo cáo lỗi (Bug Reporting) và tự động tạo ticket/bug lên Jira |

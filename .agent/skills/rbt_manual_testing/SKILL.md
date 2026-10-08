@@ -1,6 +1,6 @@
 ---
-name: RBT Manual Testing
-description: Skill sinh manual test cases với 2 modes — QUICK (sinh nhanh từ requirements) và FULL RBT (quy trình AI-RBT 6 bước có đánh giá rủi ro). Master skill cho mọi tác vụ manual test case.
+name: rbt_manual_testing
+description: Master skill sinh manual test cases với 2 chế độ — QUICK (sinh nhanh 1 lượt) và FULL RBT (quy trình AI-RBT 6 bước có Q&A, Traceability Matrix, đánh giá rủi ro). Dùng khi user yêu cầu "viết test case", "sinh TC", "test cases cho form/module", "phân tích RBT", "traceability matrix".
 ---
 
 # RBT Manual Testing
@@ -35,8 +35,9 @@ Sử dụng skill này khi:
 
 **KHÔNG** sử dụng skill này khi:
 
-- Cần sinh automation code → dùng `qa_automation_engineer`
-- Cần inspect DOM / sinh locator → dùng `ui_debug_agent` / `smart_locator_agent`
+- Cần sinh automation code / locator → ngoài phạm vi kit này (kit chỉ phục vụ manual testing)
+- Cần phân tích thiết kế Figma/mockup/screenshot → dùng `design_analyzer`
+- Cần báo cáo lỗi → dùng `log_bug`
 - Chỉ cần sinh test data → dùng `test_data_generator`
 
 ---
@@ -340,7 +341,7 @@ plans/manual/
 └── 06_template_mapping/prompt.txt
 ```
 
-Agent cần đọc prompt template tương ứng **trước khi** thực hiện mỗi bước (FULL RBT mode).
+Các prompt template này dành cho **Luồng Copy-Paste** (QA team dán vào chat AI từng bước). Khi chạy qua slash command, agent làm theo hướng dẫn các bước ở trên và **không bắt buộc** đọc prompt template — chỉ mở file tương ứng để tham khảo khi cần thêm chi tiết.
 
 Mode QUICK không yêu cầu đọc prompt templates — agent áp dụng trực tiếp các kỹ thuật EP/BVA/Decision Table.
 

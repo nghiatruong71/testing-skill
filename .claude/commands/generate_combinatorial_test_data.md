@@ -223,7 +223,7 @@ skills:
 
 #### Output cho Mode GENERATE:
 
-Tạo artifact file(s) theo format user yêu cầu:
+Lưu file(s) vào `output/<feature>/<YYYY-MM-DD>/` (ví dụ: `output/<feature>/<YYYY-MM-DD>/combinatorial_data_<feature>.json`) theo format user yêu cầu:
 
 **JSON (mặc định):**
 ```json

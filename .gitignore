@@ -142,3 +142,5 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
 .claude/worktrees/
+# Output do Agent sinh ra (test cases, CSV, báo cáo...) — không commit
+output/

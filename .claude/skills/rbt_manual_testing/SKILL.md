@@ -1,6 +1,6 @@
 ---
-name: RBT Manual Testing
-description: Skill sinh manual test cases với 2 modes — QUICK (sinh nhanh từ requirements) và FULL RBT (quy trình AI-RBT 6 bước có đánh giá rủi ro). Master skill cho mọi tác vụ manual test case.
+name: rbt_manual_testing
+description: Master skill sinh manual test cases với 2 chế độ — QUICK (sinh nhanh 1 lượt) và FULL RBT (quy trình AI-RBT 6 bước có Q&A, Traceability Matrix, đánh giá rủi ro). Dùng khi user yêu cầu "viết test case", "sinh TC", "test cases cho form/module", "phân tích RBT", "traceability matrix".
 ---
 
 # RBT Manual Testing
@@ -35,8 +35,9 @@ Sử dụng skill này khi:
 
 **KHÔNG** sử dụng skill này khi:
 
-- Cần sinh automation code → dùng `qa_automation_engineer`
-- Cần inspect DOM / sinh locator → dùng `ui_debug_agent` / `smart_locator_agent`
+- Cần sinh automation code / locator → ngoài phạm vi kit này (kit chỉ phục vụ manual testing)
+- Cần phân tích thiết kế Figma/mockup/screenshot → dùng `design_analyzer`
+- Cần báo cáo lỗi → dùng `log_bug`
 - Chỉ cần sinh test data → dùng `test_data_generator`
 
 ---
@@ -107,7 +108,8 @@ Sinh test cases **nhanh, đủ chất lượng** từ requirements/user stories 
    - Expected Results (đánh số tương ứng)
    - Test Data (**phải cụ thể**, không placeholder)
    - Priority (Critical / High / Medium / Low)
-6. **Xuất ra bảng Markdown** chuẩn, sẵn sàng copy sang Excel/Jira
+6. **Xuất ra bảng Markdown** chuẩn, lưu file `output/<module>/<YYYY-MM-DD>/test_cases_<module>.md`
+7. **Chạy lint + xuất CSV** (xem mục *Kiểm tra & Xuất file* bên dưới)
 
 ## Bảng Output
 
@@ -169,7 +171,7 @@ Quy trình bài bản, tuần tự cho module phức tạp. Bao gồm phân tíc
 
 > [!NOTE]
 > **2 luồng sử dụng riêng biệt:**
-> - **Luồng Antigravity (slash command):** Agent thực hiện theo hướng dẫn tổng quát bên dưới. Agent KHÔNG cần đọc file prompt.txt.
+> - **Luồng Claude Code (slash command):** Agent thực hiện theo hướng dẫn tổng quát bên dưới. Agent KHÔNG cần đọc file prompt.txt.
 > - **Luồng Copy-Paste (ChatGPT/Claude):** QA team copy nội dung prompt chi tiết từ `plans/manual/01-06/prompt.txt` vào chat AI, từng bước một.
 
 ### Bước 1: Context & Role-play (Khởi tạo ngữ cảnh)
@@ -303,9 +305,28 @@ Quy trình bài bản, tuần tự cho module phức tạp. Bao gồm phân tíc
    - Test Steps và Expected Result đánh số, dùng `<br>` xuống dòng trong cell
    - **TUYỆT ĐỐI không được bỏ sót** bất kỳ test case nào đã sinh ở Bước 5
    - Nếu quá dài → chia thành Part 1, Part 2... và hỏi user để tiếp tục
-3. Xuất output dưới dạng Artifact (`test_cases_<module>.md`)
+3. Lưu output thành file Markdown (`output/<module>/<YYYY-MM-DD>/test_cases_<module>.md`)
+4. Chạy lint + xuất CSV (xem mục *Kiểm tra & Xuất file*)
 
-**Output:** Bảng Test Cases Markdown hoàn chỉnh.
+**Output:** Bảng Test Cases Markdown hoàn chỉnh (0 lỗi lint) + file CSV `output/<module>/<YYYY-MM-DD>/test_cases_<module>_xray.csv`.
+
+---
+
+## Kiểm tra & Xuất file (áp dụng cho cả 2 modes)
+
+Sau khi lưu file `output/<module>/<YYYY-MM-DD>/test_cases_<module>.md`, agent **BẮT BUỘC** chạy:
+
+```bash
+# 1. Lint theo Definition of Done — sửa đến khi 0 ERROR
+python3 scripts/testcases/lint_testcases.py output/<module>/<YYYY-MM-DD>/test_cases_<module>.md
+
+# 2. Xuất CSV import Xray / mở bằng Excel (UTF-8 BOM, mỗi step 1 dòng, gom theo TCID)
+python3 scripts/testcases/md_to_xray_csv.py output/<module>/<YYYY-MM-DD>/test_cases_<module>.md
+```
+
+- Lint báo ERROR → sửa file Markdown rồi chạy lại (xác minh từng lỗi, bỏ qua false positive và ghi rõ lý do).
+- Để CSV gán Test Data theo từng step, đánh số Test Data khớp với Test Steps (`1. ...<br>2. ...`); nếu không, toàn bộ Test Data gán vào step 1.
+- Cần review nghiệp vụ sâu hơn (độ bao phủ, gộp validation, truy vết REQ) → dùng skill `testcase_reviewer` (`/review_testcases`).
 
 ---
 
@@ -323,6 +344,7 @@ Quy trình bài bản, tuần tự cho module phức tạp. Bao gồm phân tíc
 - ❌ Dùng chung 1 bộ validation cho tất cả fields (Email ≠ Phone ≠ Date ≠ Text)
 - ❌ Bỏ qua security validation (XSS, SQL injection) cho text/textarea fields
 - ❌ Không liệt kê danh sách fields trước khi sinh validation TCs
+- ❌ Bàn giao khi lint còn ERROR
 
 ---
 
@@ -340,7 +362,7 @@ plans/manual/
 └── 06_template_mapping/prompt.txt
 ```
 
-Agent cần đọc prompt template tương ứng **trước khi** thực hiện mỗi bước (FULL RBT mode).
+Các prompt template này dành cho **Luồng Copy-Paste** (QA team dán vào chat AI từng bước). Khi chạy qua slash command, agent làm theo hướng dẫn các bước ở trên và **không bắt buộc** đọc prompt template — chỉ mở file tương ứng để tham khảo khi cần thêm chi tiết.
 
 Mode QUICK không yêu cầu đọc prompt templates — agent áp dụng trực tiếp các kỹ thuật EP/BVA/Decision Table.
 
@@ -352,7 +374,8 @@ Mode QUICK không yêu cầu đọc prompt templates — agent áp dụng trực
 
 | Output | Mô tả |
 |--------|--------|
-| Bảng TC Markdown | Test Cases đầy đủ, sẵn sàng copy sang Excel/Jira |
+| `output/<module>/<YYYY-MM-DD>/test_cases_<module>.md` | Bảng Test Cases đầy đủ, 0 lỗi lint |
+| `output/<module>/<YYYY-MM-DD>/test_cases_<module>_xray.csv` | File import Xray / mở bằng Excel |
 
 ### Mode FULL RBT
 
@@ -363,6 +386,6 @@ Mode QUICK không yêu cầu đọc prompt templates — agent áp dụng trực
 | 3 | Module Decomposition + Dependencies |
 | 4 | Traceability Matrix + High-Level Scenarios |
 | 5 | Test Cases chi tiết (Risk Level + Test Data) |
-| 6 | Bảng Markdown chuẩn (Jira/Excel ready) |
+| 6 | Bảng Markdown chuẩn (0 lỗi lint) + CSV import Xray |
 
-Tất cả output phải bằng **Tiếng Việt**, format **Markdown**, sử dụng **Artifact** nếu nội dung dài.
+Tất cả output phải bằng **Tiếng Việt**, format **Markdown**, lưu thành file `.md` nếu nội dung dài.

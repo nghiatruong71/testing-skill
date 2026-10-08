@@ -1,148 +1,154 @@
 ---
-name: Test Data Generator
-description: Skill sinh test data có cấu trúc, unique, traceable cho automation tests, bao gồm positive, negative, boundary và edge cases.
+name: test_data_generator
+description: Sinh test data cụ thể, unique, traceable cho manual test cases (positive, negative, boundary, edge, API payload, dữ liệu đa module/ma trận kết hợp). Dùng khi user yêu cầu "sinh test data", "dữ liệu test cho form", "data biên", hoặc khi test case cần giá trị cụ thể thay cho placeholder.
 ---
 
 # Test Data Generator
 
-Purpose: Generate reliable test data for automation tests.
+Mục đích: Sinh test data cụ thể, đáng tin cậy để điền trực tiếp vào cột **Test Data** của manual test cases (không dùng placeholder chung chung).
 
 ---
 
-## When to Use
+## Khi nào sử dụng
 
-Use this skill when:
+Sử dụng skill này khi:
 
-- Creating test data for new test cases
-- Generating boundary and edge case data
-- Setting up data-driven tests
-- Creating API request payloads
-
----
-
-## Responsibilities
-
-Generate test data for:
-
-- Registration forms
-- Login credentials
-- Form submissions
-- API payloads
-- Search queries
-- File uploads
+- Cần test data cho test cases mới
+- Sinh dữ liệu cho các trường hợp biên (boundary) và ngoại lệ (edge case)
+- Chuẩn bị bộ dữ liệu cho data-driven testing (nhiều bộ input cho cùng 1 kịch bản)
+- Chuẩn bị API request payload để test bằng Postman
 
 ---
 
-## Data Rules
+## Phạm vi
 
-All generated data must be:
+Sinh test data cho:
 
-- **Unique** — No duplication within test suite
-- **Deterministic** — Same seed produces same data (when needed)
-- **Traceable** — Can identify which test generated it
+- Form đăng ký
+- Thông tin đăng nhập
+- Form nhập liệu (submit)
+- API payload
+- Từ khóa tìm kiếm
+- File upload
 
 ---
 
-## Unique Data Pattern
+## Quy tắc dữ liệu
 
-Recommended format:
+Mọi dữ liệu sinh ra phải:
+
+- **Unique** — Không trùng lặp trong cùng bộ test
+- **Deterministic** — Cùng seed cho ra cùng dữ liệu (khi cần tái hiện)
+- **Traceable** — Nhìn dữ liệu là biết test case nào tạo ra
+
+---
+
+## Pattern dữ liệu unique
+
+Theo CLAUDE.md (mục 7): `tên_chức_năng + timestamp + suffix`
 
 ```
-<prefix>_<testName>_<timestamp>
+<prefix>_<tên_chức_năng>_<timestamp>
 ```
 
-Examples:
+Ví dụ:
 
 ```
-auto_register_20260402133000
-test_login_1712024100
+manual_register_1712049200
+test_login_1712049200
 ```
 
 ---
 
-## Common Data Types
+## Các loại dữ liệu thường gặp
 
 ### Email
 ```
-auto_<testName>_<timestamp>@test.com
+test_<tên_chức_năng>_<timestamp>@manual.test
 ```
-Example: `auto_register_20260402@test.com`
+Ví dụ: `test_register_1712049200@manual.test`
 
 ### Username
 ```
-user_<testName>_<timestamp>
+manual_<tên_chức_năng>_<timestamp>
 ```
-Example: `user_login_20260402133000`
+Ví dụ: `manual_user_1712049200`
 
-### Phone
+### Mã / ID
 ```
-Random 10-digit number starting with valid prefix
+TC_<MODULE>_<timestamp>
 ```
-Example: `0912345678`
+Ví dụ: `TC_REG_1712049200`
 
-### Password
+### Số điện thoại
 ```
-Mix of uppercase, lowercase, digits, special chars
+10 chữ số, bắt đầu bằng đầu số nhà mạng Việt Nam hợp lệ
 ```
-Example: `Test@12345`
+Ví dụ: `0912345678`
+
+### Mật khẩu
+```
+Kết hợp chữ hoa, chữ thường, chữ số, ký tự đặc biệt
+```
+Ví dụ: `Test@12345`
 
 ---
 
-## Data Categories
+## Phân loại dữ liệu
 
-### Positive Data (Happy Path)
-- Valid format, within constraints
-- All required fields filled
-- Standard business values
+### Dữ liệu hợp lệ (Positive — Happy Path)
+- Đúng định dạng, nằm trong giới hạn cho phép
+- Điền đủ các trường bắt buộc
+- Giá trị nghiệp vụ thông thường
 
-### Negative Data
-- Missing required fields
-- Invalid format (wrong email, short password)
-- Invalid characters
-- Already existing values (duplicate check)
+### Dữ liệu sai (Negative)
+- Thiếu trường bắt buộc
+- Sai định dạng (email sai, mật khẩu quá ngắn)
+- Ký tự không hợp lệ
+- Giá trị đã tồn tại (kiểm tra trùng lặp)
 
-### Boundary Values
-- Minimum length (e.g., 1 character)
-- Maximum length (e.g., 255 characters)
-- Min + 1, Max - 1
-- Empty string vs null
-- Zero, negative numbers
+### Giá trị biên (Boundary)
+- Độ dài tối thiểu (ví dụ: 1 ký tự)
+- Độ dài tối đa (ví dụ: 255 ký tự)
+- Min - 1, Min + 1, Max - 1, Max + 1
+- Chuỗi rỗng vs null
+- Số 0, số âm
 
-### Edge Cases
-- Unicode / special characters
-- Very long strings
-- SQL injection patterns (for security testing)
-- HTML tags in text fields
-- Leading/trailing whitespace
-
----
-
-## Constraints
-
-Test data must:
-
-- Respect field validation rules (from DOM inspection)
-- Match input format (date format, phone format)
-- Avoid duplication across test runs
-- Not contain real PII (personal data)
+### Trường hợp ngoại lệ (Edge Cases)
+- Unicode / ký tự đặc biệt / Emoji
+- Chuỗi rất dài
+- Mẫu SQL injection (`' OR 1=1--`) — phục vụ kiểm thử bảo mật
+- Thẻ HTML / XSS (`<script>alert(1)</script>`)
+- Khoảng trắng đầu/cuối
 
 ---
 
-## Output Format
+## Ràng buộc
 
-Provide data in structured format:
+Test data phải:
+
+- Tuân thủ validation rules của từng trường (lấy từ requirements hoặc inspect DOM)
+- Đúng định dạng input (định dạng ngày, số điện thoại)
+- Không trùng lặp giữa các lần chạy test
+- Không chứa dữ liệu cá nhân thật (PII)
+
+---
+
+## Định dạng đầu ra
+
+Trình bày dữ liệu có cấu trúc và lưu vào `output/<module>/<YYYY-MM-DD>/test_data_<module>.json`:
 
 ```json
 {
   "positive": [
-    { "email": "auto_tc01_20260402@test.com", "password": "Test@12345" }
+    { "email": "test_register_1712049200@manual.test", "password": "Test@12345" }
   ],
   "negative": [
-    { "email": "", "password": "Test@12345", "expectedError": "Email is required" },
-    { "email": "invalid-email", "password": "Test@12345", "expectedError": "Invalid email format" }
+    { "email": "", "password": "Test@12345", "expectedError": "Email là bắt buộc" },
+    { "email": "test_register_1712049201.manual.test", "password": "Test@12345", "expectedError": "Email không đúng định dạng" }
   ],
   "boundary": [
-    { "email": "a@b.co", "password": "12345678", "note": "Min length" }
+    { "email": "test_register_1712049202@manual.test", "password": "Abc@1234", "note": "Mật khẩu đúng độ dài tối thiểu (8 ký tự)" }
   ]
 }
 ```
@@ -244,6 +250,7 @@ Module 3: tax_note      = "auto_c01_tax_1712049200"
 
 ---
 
-## Rules References
+## Tham chiếu quy tắc
 
-- `.claude/rules/automation_rules.md` — Test data generation rules (Section 2)
+- `CLAUDE.md` — Mục 7: Test Data Rules
+- `.claude/rules/testcase_design_rules.md` — Mục 2: Checklist kiểm thử theo loại trường (EP/BVA)

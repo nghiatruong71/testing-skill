@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Testing Kit - Nâng Tầm Manual Testing Với AI Agent</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-primary: #090d16;
+      --bg-secondary: #0f1626;
+      --bg-card: rgba(20, 29, 47, 0.7);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --text-main: #e2e8f0;
+      --text-muted: #94a3b8;
+      --text-white: #ffffff;
+      --accent-grad: linear-gradient(135deg, #6366f1 0%, #3b82f6 50%, #06b6d4 100%);
+      --accent-blue: #3b82f6;
+      --accent-cyan: #06b6d4;
+      --accent-purple: #8b5cf6;
+      --accent-pink: #ec4899;
+      --glow-glow: 0 0 40px rgba(99, 102, 241, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    /* Background glow decorations */
+    .glow-sphere-1 {
+      position: absolute;
+      top: -10%;
+      right: -10%;
+      width: 50vw;
+      height: 50vh;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, rgba(0,0,0,0) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .glow-sphere-2 {
+      position: absolute;
+      bottom: -10%;
+      left: -10%;
+      width: 50vw;
+      height: 50vh;
+      background: radial-gradient(circle, rgba(6, 182, 212, 0.1) 0%, rgba(0,0,0,0) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Header */
+    header {
+      padding: 24px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+      border-bottom: 1px solid var(--border-color);
+      background: rgba(9, 13, 22, 0.5);
+      backdrop-filter: blur(10px);
+    }
+
+    .logo {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 1.5rem;
+      background: var(--accent-grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo span {
+      background: rgba(99, 102, 241, 0.15);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      color: #818cf8;
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 99px;
+      -webkit-text-fill-color: initial;
+    }
+
+    .doc-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: color 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .doc-link:hover {
+      color: var(--text-white);
+    }
+
+    /* Presentation Area */
+    .slides-container {
+      flex-grow: 1;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      perspective: 1000px;
+      padding: 40px;
+      z-index: 5;
+    }
+
+    .slide {
+      position: absolute;
+      width: 100%;
+      max-width: 1100px;
+      height: 100%;
+      max-height: 600px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 24px;
+      padding: 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3), var(--glow-glow);
+      backdrop-filter: blur(16px);
+      opacity: 0;
+      transform: scale(0.95) translateZ(-100px);
+      pointer-events: none;
+      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow-y: auto;
+    }
+
+    /* Custom scrollbar for slides */
+    .slide::-webkit-scrollbar {
+      width: 6px;
+    }
+    .slide::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .slide::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: scale(1) translateZ(0);
+      pointer-events: auto;
+      z-index: 2;
+    }
+
+    .slide.prev {
+      opacity: 0;
+      transform: scale(0.95) translateX(-100%) rotateY(15deg);
+    }
+
+    .slide.next-slide {
+      opacity: 0;
+      transform: scale(0.95) translateX(100%) rotateY(-15deg);
+    }
+
+    /* Typography inside slides */
+    h1, h2, h3 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      color: var(--text-white);
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      line-height: 1.15;
+      margin-bottom: 24px;
+      background: var(--accent-grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    h2 {
+      font-size: 2.5rem;
+      margin-bottom: 28px;
+      border-left: 5px solid var(--accent-blue);
+      padding-left: 16px;
+      line-height: 1.2;
+    }
+
+    p {
+      font-size: 1.125rem;
+      line-height: 1.6;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    /* Grid & Cards System */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      align-items: center;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 24px;
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(99, 102, 241, 0.3);
+      transform: translateY(-4px);
+    }
+
+    .card h3 {
+      font-size: 1.25rem;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card p {
+      font-size: 0.95rem;
+      margin-bottom: 0;
+    }
+
+    .card.accent {
+      border-color: rgba(99, 102, 241, 0.3);
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(0,0,0,0) 100%);
+    }
+
+    /* Features List */
+    .feature-list {
+      list-style: none;
+    }
+
+    .feature-list li {
+      position: relative;
+      padding-left: 28px;
+      margin-bottom: 16px;
+      font-size: 1.1rem;
+    }
+
+    .feature-list li::before {
+      content: "✦";
+      position: absolute;
+      left: 0;
+      color: var(--accent-cyan);
+      font-weight: bold;
+    }
+
+    /* Code Block Style */
+    pre {
+      background: #060913;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      overflow-x: auto;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+      position: relative;
+    }
+
+    code {
+      color: var(--accent-cyan);
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: var(--text-main);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Timelines */
+    .timeline {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      margin-top: 40px;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      top: 20px;
+      left: 10%;
+      right: 10%;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.1);
+      z-index: 1;
+    }
+
+    .timeline-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 15%;
+      text-align: center;
+      z-index: 2;
+    }
+
+    .step-num {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--bg-secondary);
+      border: 2px solid var(--accent-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: var(--text-white);
+      margin-bottom: 12px;
+      transition: all 0.3s;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .timeline-step:hover .step-num {
+      background: var(--accent-blue);
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+      transform: scale(1.1);
+    }
+
+    .step-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-white);
+    }
+
+    /* Footer / Controls */
+    footer {
+      padding: 24px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+      border-top: 1px solid var(--border-color);
+      background: rgba(9, 13, 22, 0.5);
+      backdrop-filter: blur(10px);
+    }
+
+    .controls {
+      display: flex;
+      gap: 16px;
+    }
+
+    .btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 10px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+    }
+
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255,255,255,0.2);
+      color: var(--text-white);
+    }
+
+    .btn-primary {
+      background: var(--accent-grad);
+      border: none;
+      color: var(--text-white);
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+      transform: scale(1.02);
+    }
+
+    .progress-bar-container {
+      width: 250px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--accent-grad);
+      transition: width 0.3s ease;
+    }
+
+    .slide-number {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .help-hint {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      background: rgba(0, 0, 0, 0.4);
+      padding: 4px 12px;
+      border-radius: 99px;
+      border: 1px solid rgba(255,255,255,0.05);
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    /* Grid of slash commands */
+    .cmd-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 12px;
+    }
+
+    .cmd-card {
+      background: rgba(9, 13, 22, 0.4);
+      border: 1px solid rgba(255,255,255,0.04);
+      border-radius: 12px;
+      padding: 16px;
+      transition: all 0.2s;
+    }
+
+    .cmd-card:hover {
+      border-color: rgba(6, 182, 212, 0.3);
+      background: rgba(9, 13, 22, 0.6);
+    }
+
+    .cmd-card code {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--accent-cyan);
+      margin-bottom: 8px;
+    }
+
+    .cmd-card span {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+      display: block;
+    }
+
+    .badge-p0 {
+      background: rgba(236, 72, 153, 0.15);
+      color: #f472b6;
+      border: 1px solid rgba(236, 72, 153, 0.3);
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    /* Grid for Comparison */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .compare-panel {
+      padding: 20px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .compare-panel.bad {
+      border-color: rgba(239, 68, 68, 0.15);
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.02) 0%, rgba(0,0,0,0) 100%);
+    }
+
+    .compare-panel.good {
+      border-color: rgba(16, 185, 129, 0.15);
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.02) 0%, rgba(0,0,0,0) 100%);
+    }
+
+    .compare-panel h3 {
+      font-size: 1.15rem;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .compare-panel.bad h3 { color: #f87171; }
+    .compare-panel.good h3 { color: #34d399; }
+
+    .compare-panel ul {
+      list-style-type: none;
+      font-size: 0.95rem;
+    }
+
+    .compare-panel ul li {
+      margin-bottom: 10px;
+      position: relative;
+      padding-left: 20px;
+    }
+
+    .compare-panel.bad ul li::before {
+      content: "✕";
+      position: absolute;
+      left: 0;
+      color: #ef4444;
+    }
+
+    .compare-panel.good ul li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: #10b981;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glow-sphere-1"></div>
+  <div class="glow-sphere-2"></div>
+
+  <!-- Header -->
+  <header>
+    <div class="logo">
+      Claude Testing Kit <span>Manual QA Edition</span>
+    </div>
+    <a href="./README.md" class="doc-link" target="_blank">
+      📖 Xem tài liệu hướng dẫn
+    </a>
+  </header>
+
+  <!-- Presentation Slides -->
+  <div class="slides-container">
+
+    <!-- Slide 1: Welcome -->
+    <div class="slide active">
+      <div class="grid-2">
+        <div>
+          <h1>Nâng Tầm Manual Testing Với AI Agent</h1>
+          <p>Giới thiệu giải pháp chuẩn hóa quy trình phân tích nghiệp vụ, thiết kế Test Cases và tự động hóa sinh Test Data chất lượng cao với Claude Code / Antigravity IDE.</p>
+          <div style="margin-top: 32px; display: flex; gap: 12px;">
+            <button class="btn btn-primary" onclick="nextSlide()">Bắt đầu ngay ➜</button>
+          </div>
+        </div>
+        <div style="text-align: center;">
+          <div style="display: inline-block; padding: 40px; background: rgba(99, 102, 241, 0.08); border-radius: 50%; border: 1px dashed rgba(99, 102, 241, 0.3); animation: pulse 3s infinite alternate;">
+            <svg width="120" height="120" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#818cf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M2 17L12 22L22 17" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M2 12L12 17L22 12" stroke="#06b6d4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 2: Pain Points -->
+    <div class="slide">
+      <h2>Những Thách Thức Trong Manual Testing</h2>
+      <p style="margin-bottom: 32px;">Quy trình kiểm thử truyền thống thường đối mặt với các vấn đề làm chậm tiến độ và ảnh hưởng chất lượng sản phẩm.</p>
+      
+      <div class="grid-3">
+        <div class="card">
+          <h3>🔍 Yêu Cầu Nghiệp Vụ Mờ Nhạt</h3>
+          <p>Tài liệu PO viết đôi khi thiếu chi tiết hoặc mâu thuẫn, QA dễ bỏ sót logic biên dẫn đến lỗi lọt lưới (leak bug).</p>
+        </div>
+        <div class="card">
+          <h3>📋 Chất Lượng Case Không Đều</h3>
+          <p>Kịch bản kiểm thử phụ thuộc nhiều vào kinh nghiệm của từng QA. Thiếu các kịch bản negative/edge cases.</p>
+        </div>
+        <div class="card">
+          <h3>🧬 Khó Khăn Tạo Test Data</h3>
+          <p>Việc tự nghĩ test data ngẫu nhiên nhưng đúng cấu trúc và traceable tốn rất nhiều thời gian thủ công của QA.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 3: Introduction to Kit -->
+    <div class="slide">
+      <h2>Giới Thiệu Claude Testing Kit</h2>
+      <p>Là bộ công cụ tối ưu hóa tích hợp sâu vào môi trường làm việc của AI Agent (Antigravity hoặc Claude Code CLI), thiết kế dành riêng cho Manual QA tại Việt Nam.</p>
+      
+      <div class="grid-2">
+        <div>
+          <ul class="feature-list">
+            <li><strong>Chuẩn hóa 100% Tiếng Việt:</strong> Giao tiếp, làm rõ nghiệp vụ và kết xuất Test Case bằng tiếng Việt tự nhiên, chính xác.</li>
+            <li><strong>Tự động hóa theo Workflow:</strong> Trực quan hóa các quy trình phân tích và thiết kế thông qua phím tắt tiện lợi.</li>
+            <li><strong>Cam kết đầu ra chuẩn Jira/Excel:</strong> Test cases định dạng bảng markdown gọn gàng, sẵn sàng import lên Xray hay lưu trữ Excel.</li>
+          </ul>
+        </div>
+        <div>
+          <pre><code>claude-testing-kit/
+├── .agent/             # Cấu hình Antigravity IDE
+│   ├── workflows/      # Phím tắt lệnh Slash Commands
+│   ├── rules/          # Tiêu chuẩn thiết kế Test Cases
+│   └── skills/         # Năng lực xử lý chuyên biệt
+├── plans/              # Kế hoạch RBT & Cross-module
+└── prompt_templates/   # Prompt dùng nhanh (Copy-Paste)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 4: Slash Commands -->
+    <div class="slide">
+      <h2>Hệ Thống Phím Tắt Lệnh (Slash Commands)</h2>
+      <p>Kích hoạt nhanh các luồng công việc phức tạp chỉ với một ký tự `/` đơn giản.</p>
+      
+      <div class="cmd-grid">
+        <div class="cmd-card">
+          <code>/analyze_requirement_document</code>
+          <span>Phân tích tài liệu yêu cầu (Jira ticket, User Story) để phát hiện điểm mờ nghiệp vụ.</span>
+        </div>
+        <div class="cmd-card">
+          <code>/generate_manual_testcases_rbt</code>
+          <span>Sinh bộ Test Cases chất lượng cao theo đúng quy trình AI-RBT 6 bước.</span>
+        </div>
+        <div class="cmd-card">
+          <code>/generate_requirements_from_website</code>
+          <span>Tự động quét cấu trúc DOM/giao diện website để viết tài liệu Requirements.</span>
+        </div>
+        <div class="cmd-card">
+          <code>/generate_test_data</code>
+          <span>Sinh dữ liệu test ngẫu nhiên, unique nhưng traceable cho các UI Form hoặc API.</span>
+        </div>
+      </div>
+      
+      <div class="cmd-grid" style="margin-top: 16px;">
+        <div class="cmd-card">
+          <code>/generate_cross_module_test_plan</code>
+          <span>Thiết kế kịch bản test tích hợp kết hợp nhiều Module nối tiếp.</span>
+        </div>
+        <div class="cmd-card">
+          <code>/generate_combinatorial_test_data</code>
+          <span>Sinh ma trận dữ liệu kết hợp đa chiều (Pairwise/Full Cartesian).</span>
+        </div>
+        <div class="cmd-card">
+          <code>/generate_application_test_plan</code>
+          <span>Khám phá toàn bộ ứng dụng web để sinh test plan tổng thể.</span>
+        </div>
+        <div class="cmd-card">
+          <code>/import_test_results_xray</code>
+          <span>Đẩy kết quả test automation từ local lên Jira/Xray Cloud.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 5: RBT Workflow -->
+    <div class="slide">
+      <h2>Quy Trình Thiết Kế Test Cases Chuẩn RBT</h2>
+      <p>Áp dụng kiểm thử dựa trên rủi ro (Risk-Based Testing) để tối ưu hóa nguồn lực và tăng tối đa độ bao phủ.</p>
+      
+      <div class="timeline">
+        <div class="timeline-step">
+          <div class="step-num">1</div>
+          <div class="step-title">Thiết Lập Bối Cảnh</div>
+        </div>
+        <div class="timeline-step">
+          <div class="step-num">2</div>
+          <div class="step-title">Phân Rã Tính Năng</div>
+        </div>
+        <div class="timeline-step">
+          <div class="step-num">3</div>
+          <div class="step-title">Phân Tích Rủi Ro</div>
+        </div>
+        <div class="timeline-step">
+          <div class="step-num">4</div>
+          <div class="step-title">Traceability Matrix</div>
+        </div>
+        <div class="timeline-step">
+          <div class="step-num">5</div>
+          <div class="step-title">Sinh Kịch Bản</div>
+        </div>
+        <div class="timeline-step">
+          <div class="step-num">6</div>
+          <div class="step-title">Tinh Chỉnh & Bàn Giao</div>
+        </div>
+      </div>
+      
+      <div style="margin-top: 36px; padding: 16px; background: rgba(99, 102, 241, 0.05); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 12px; font-size: 0.95rem;">
+        💡 <strong>Điểm cốt lõi:</strong> AI tự phân loại các trường hợp kiểm thử theo độ rủi ro (P0: Chặn luồng nghiệp vụ chính, P1: Ảnh hưởng lớn, P2: Lỗi nhỏ/Giao diện) để ưu tiên thực hiện trước.
+      </div>
+    </div>
+
+    <!-- Slide 6: DoD and Rules -->
+    <div class="slide">
+      <h2>Chất Lượng Đầu Ra & Quy Tắc Nghiêm Ngặt</h2>
+      <p>AI Agent tuân thủ bộ quy tắc trong dự án để đảm bảo tài liệu Test Cases luôn đạt chuẩn bàn giao (Definition of Done).</p>
+      
+      <div class="compare-grid">
+        <div class="compare-panel bad">
+          <h3>Anti-Patterns (Hành vi bị cấm)</h3>
+          <ul>
+            <li>Dùng dữ liệu test chung chung như "nhập email hợp lệ".</li>
+            <li>Test Step viết mơ hồ, lặp lại nhiều lần.</li>
+            <li>Gộp validation của nhiều trường vào chung 1 Test Case.</li>
+            <li>Các Test Cases phụ thuộc chéo vào kết quả của nhau.</li>
+          </ul>
+        </div>
+        <div class="compare-panel good">
+          <h3>Đúng Chuẩn Bàn Giao (DoD)</h3>
+          <ul>
+            <li>Dữ liệu test có giá trị cụ thể, duy nhất và truy vết được (traceable).</li>
+            <li>Từng bước test và expected result đánh số tương ứng (1, 2, 3...).</li>
+            <li>Bao phủ đầy đủ: Happy, Negative, Boundary, Edge Cases.</li>
+            <li>Bảng Markdown sạch sẽ, sẵn sàng import lên Jira/Excel.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 7: Live Demo Script -->
+    <div class="slide">
+      <h2>Kịch Bản Demo Thực Tế (Live Demo)</h2>
+      <p>Hãy cùng trải nghiệm 3 kịch bản phổ biến nhất của bộ Kit trực tiếp trên IDE:</p>
+      
+      <div class="grid-2">
+        <div class="card accent">
+          <h3>1. Phân Tích Nghiệp Vụ</h3>
+          <p>Nhập một đoạn tài liệu yêu cầu ngắn -> Chạy <code>/analyze_requirement_document</code> để AI tự phát hiện các điểm mờ nghiệp vụ, yêu cầu làm rõ trước khi viết test.</p>
+        </div>
+        <div class="card accent">
+          <h3>2. Thiết Kế Test Cases</h3>
+          <p>Chạy <code>/generate_manual_testcases_rbt</code> -> AI thực hiện quy trình RBT 6 bước và xuất ra bảng Test Cases hoàn chỉnh đạt tiêu chuẩn DoD.</p>
+        </div>
+      </div>
+      
+      <div style="margin-top: 16px;" class="card accent">
+        <h3>3. Tạo Dữ Liệu Kiểm Thử (Test Data)</h3>
+        <p>Chạy <code>/generate_test_data</code> cho form Đăng Ký -> AI tự sinh bộ dữ liệu email/số điện thoại dạng unique như <code>test_register_1712049200@manual.test</code> để tiện debug và không trùng lặp database.</p>
+      </div>
+    </div>
+
+    <!-- Slide 8: Jira Rovo Bug Agent -->
+    <div class="slide">
+      <h2>Trợ Lý Log Bug Tự Động Với Jira Rovo Agent</h2>
+      <p>Tích hợp và tự động hóa quy trình báo cáo lỗi di động trực tiếp trên Jira Rovo.</p>
+      
+      <div class="grid-2">
+        <div>
+          <ul class="feature-list">
+            <li><strong>Nhận diện & Phân tích thông minh:</strong> Tự động phân tích lỗi từ hội thoại, crash logs, console logs hoặc API payloads.</li>
+            <li><strong>Chuẩn hóa môi trường di động:</strong> Yêu cầu làm rõ OS version, device model, app build version và các bước tái hiện (Steps to Reproduce).</li>
+            <li><strong>Tạo Bug Ticket tức thì:</strong> Tích hợp Jira Actions để tự động tạo ticket Bug chuẩn QA trên Jira sau khi nhận được xác nhận từ người dùng.</li>
+          </ul>
+        </div>
+        <div>
+          <pre style="max-height: 250px; overflow-y: auto;"><code># ROLE & GOAL
+- Assistant that speeds up the bug reporting and logging process.
+- Analyze errors on mobile applications (iOS/Android) and format into Jira Bug tickets.
+- Environment: Platform, Device, OS Version, App Build.
+- Severity: Critical/Blocker, Major, Minor, Trivial.
+- Call createJiraIssue (Type=Bug) after confirmation.</code></pre>
+          <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 8px; font-style: italic;">
+            💡 Sao chép cấu hình System Instructions và bật Jira Actions (createJiraIssue) trong Rovo để triển khai ngay lập tức.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 9: Expected Benefits -->
+    <div class="slide">
+      <h2>Lợi Ích Kỳ Vọng Cho Đội Ngũ QA</h2>
+      <p>Ứng dụng AI Agent hỗ trợ kiểm thử thủ công giúp tối ưu hóa đáng kể hiệu suất hoạt động.</p>
+      
+      <div class="grid-3">
+        <div class="card" style="border-color: rgba(52, 211, 153, 0.2);">
+          <div style="font-size: 2.5rem; font-weight: 800; color: #34d399; margin-bottom: 8px;">> 80%</div>
+          <h3 style="font-size: 1.1rem; margin-bottom: 8px;">Tiết Kiệm Thời Gian</h3>
+          <p>Giảm tải việc gõ định dạng bảng, nghĩ test data và viết các bước test lặp đi lặp lại.</p>
+        </div>
+        
+        <div class="card" style="border-color: rgba(99, 102, 241, 0.2);">
+          <div style="font-size: 2.5rem; font-weight: 800; color: #818cf8; margin-bottom: 8px;">100%</div>
+          <h3 style="font-size: 1.1rem; margin-bottom: 8px;">Độ Bao Phủ Yêu Cầu</h3>
+          <p>Traceability Matrix đảm bảo không có bất kỳ yêu cầu nghiệp vụ nào bị bỏ sót trong bộ test cases.</p>
+        </div>
+        
+        <div class="card" style="border-color: rgba(6, 182, 212, 0.2);">
+          <div style="font-size: 2.5rem; font-weight: 800; color: #22d3ee; margin-bottom: 8px;">Zero</div>
+          <h3 style="font-size: 1.1rem; margin-bottom: 8px;">Placeholder Data</h3>
+          <p>Tất cả dữ liệu kiểm thử được định nghĩa tường minh, tránh việc tester bối rối khi thực thi thực tế.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 10: Q&A -->
+    <div class="slide">
+      <div style="text-align: center; max-width: 700px; margin: 0 auto;">
+        <h1 style="font-size: 4rem; margin-bottom: 16px; background: var(--accent-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Q & A</h1>
+        <p style="font-size: 1.35rem; color: var(--text-white); margin-bottom: 32px;">Hỏi & Đáp - Thảo luận cách thức áp dụng vào dự án thực tế của chúng ta</p>
+        
+        <div style="display: flex; justify-content: center; gap: 16px;">
+          <a href="./README.md" class="btn" target="_blank">📚 Xem Tài Liệu Hướng Dẫn</a>
+          <button class="btn btn-primary" onclick="goToSlide(0)">Quay lại Slide đầu ↺</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Help Hint -->
+  <div class="help-hint">
+    Sử dụng phím ⬅️ ➡️ hoặc phím Cách (Space) để di chuyển slide
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="slide-number" id="slide-num">Slide 1 / 10</div>
+    
+    <div class="progress-bar-container">
+      <div class="progress-bar" id="progress"></div>
+    </div>
+    
+    <div class="controls">
+      <button class="btn" onclick="prevSlide()">◀ Trước</button>
+      <button class="btn btn-primary" onclick="nextSlide()">Sau ▶</button>
+    </div>
+  </footer>
+
+  <script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const progressBar = document.getElementById('progress');
+    const slideNumLabel = document.getElementById('slide-num');
+
+    function updateSlides() {
+      slides.forEach((slide, idx) => {
+        slide.classList.remove('active', 'prev', 'next-slide');
+        if (idx === currentSlide) {
+          slide.classList.add('active');
+        } else if (idx < currentSlide) {
+          slide.classList.add('prev');
+        } else {
+          slide.classList.add('next-slide');
+        }
+      });
+
+      // Update progress bar
+      const progressPercent = ((currentSlide + 1) / slides.length) * 100;
+      progressBar.style.width = `${progressPercent}%`;
+
+      // Update label
+      slideNumLabel.textContent = `Slide ${currentSlide + 1} / ${slides.length}`;
+    }
+
+    function nextSlide() {
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      }
+    }
+
+    function goToSlide(index) {
+      if (index >= 0 && index < slides.length) {
+        currentSlide = index;
+        updateSlides();
+      }
+    }
+
+    // Keyboard controls
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prevSlide();
+      }
+    });
+
+    // Code copy function helper
+    document.querySelectorAll('pre').forEach(pre => {
+      const code = pre.querySelector('code');
+      if (code) {
+        const btn = document.createElement('button');
+        btn.className = 'copy-btn';
+        btn.textContent = 'Copy';
+        btn.addEventListener('click', () => {
+          navigator.clipboard.writeText(code.innerText).then(() => {
+            btn.textContent = 'Copied!';
+            setTimeout(() => {
+              btn.textContent = 'Copy';
+            }, 2000);
+          });
+        });
+        pre.appendChild(btn);
+      }
+    });
+
+    // Initialize progress bar width on load
+    updateSlides();
+  </script>
+</body>
+</html>

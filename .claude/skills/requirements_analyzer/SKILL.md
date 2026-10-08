@@ -1,16 +1,16 @@
 ---
 name: requirements_analyzer
-description: Kỹ năng phân tích trang web/module và sinh ra tài liệu Yêu cầu (Requirements Document/User Stories) chuẩn mực.
+description: Phân tích trang web/module (UI, DOM/HTML) và sinh tài liệu Yêu cầu chuẩn (User Stories, Acceptance Criteria, Field Specifications, validation messages, câu hỏi làm rõ). Dùng khi user yêu cầu "viết requirements", "sinh user story từ website", "phân tích màn hình/module này".
 ---
 
 # Kỹ năng Phân tích Yêu cầu (Requirements Analyzer)
 
-Kỹ năng này cung cấp các hướng dẫn chi tiết để AI (Antigravity) có thể chuyển đổi giao diện UI hoặc cấu trúc DOM/HTML của một trang web thành các tài liệu Yêu cầu rõ ràng, chi tiết, phục vụ trực tiếp cho QA, Tester và Developer.
+Kỹ năng này cung cấp các hướng dẫn chi tiết để AI (Claude) có thể chuyển đổi giao diện UI hoặc cấu trúc DOM/HTML của một trang web thành các tài liệu Yêu cầu rõ ràng, chi tiết, phục vụ trực tiếp cho QA, Tester và Developer.
 
 ## 1. Mục tiêu cốt lõi
 - Xây dựng tài liệu yêu cầu bám sát thực tế hệ thống đang chạy.
 - Đảm bảo tính nhất quán, tính bao quát cho cả Happy Path và Edge Cases (Trường hợp ngoại lệ/báo lỗi).
-- Định dạng xuất ra một cách chuyên nghiệp (Sử dụng cấu trúc Artifact).
+- Định dạng xuất ra một cách chuyên nghiệp (lưu thành file Markdown).
 
 ## 2. Quy trình trích xuất thông tin
 Khi được yêu cầu tạo Requirements từ một trang web:
@@ -25,7 +25,7 @@ Khi được yêu cầu tạo Requirements từ một trang web:
    - Sự phụ thuộc giữa các thành phần (VD: Nút Submit chỉ enable khi đã tích chọn Checkbox "Tôi đồng ý").
 
 ## 3. Cấu trúc Tài liệu Yêu cầu Đầu ra (Output Format)
-Tài liệu cần được format theo Markdown chuyên nghiệp hoặc lưu dưới dạng Artifact (`requirements_spec.md`).
+Tài liệu cần được format theo Markdown chuyên nghiệp và lưu thành file `output/<module>/<YYYY-MM-DD>/requirements_spec.md`.
 
 **Nội dung bắt buộc phải có:**
 
@@ -52,4 +52,5 @@ Liệt kê chi tiết các Validation Message mong đợi khi người dùng nh�
 ## 4. Bắt buộc (Strict Rules)
 - Luôn viết bằng **Tiếng Việt**.
 - Không tự suy diễn các yêu cầu nghiệp vụ phức tạp nếu không có căn cứ từ UI. Nếu thiếu logic, hãy liệt kê chúng vào mục "Câu hỏi/Làm rõ với PO-User".
+- Phải chủ động kiểm tra các trường hợp phụ thuộc trạng thái của Thực thể động (Dynamic Entity / State Dependency) như sự kiện kết thúc giữa chừng hoặc không hoạt động theo [requirements_analysis_rules.md](../../rules/requirements_analysis_rules.md).
 - Nếu có Playwright MCP, ưu tiên mở browser thật để screenshot/capture giao diện nếu cần.

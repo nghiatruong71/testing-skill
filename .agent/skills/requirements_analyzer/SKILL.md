@@ -1,6 +1,6 @@
 ---
 name: requirements_analyzer
-description: Kỹ năng phân tích trang web/module và sinh ra tài liệu Yêu cầu (Requirements Document/User Stories) chuẩn mực.
+description: Phân tích trang web/module (UI, DOM/HTML) và sinh tài liệu Yêu cầu chuẩn (User Stories, Acceptance Criteria, Field Specifications, validation messages, câu hỏi làm rõ). Dùng khi user yêu cầu "viết requirements", "sinh user story từ website", "phân tích màn hình/module này".
 ---
 
 # Kỹ năng Phân tích Yêu cầu (Requirements Analyzer)
@@ -52,4 +52,5 @@ Liệt kê chi tiết các Validation Message mong đợi khi người dùng nh�
 ## 4. Bắt buộc (Strict Rules)
 - Luôn viết bằng **Tiếng Việt**.
 - Không tự suy diễn các yêu cầu nghiệp vụ phức tạp nếu không có căn cứ từ UI. Nếu thiếu logic, hãy liệt kê chúng vào mục "Câu hỏi/Làm rõ với PO-User".
+- Phải chủ động kiểm tra các trường hợp phụ thuộc trạng thái của Thực thể động (Dynamic Entity / State Dependency) như sự kiện kết thúc giữa chừng hoặc không hoạt động theo [requirements_analysis_rules.md](../../rules/requirements_analysis_rules.md).
 - Nếu có Playwright MCP, ưu tiên mở browser thật để screenshot/capture giao diện nếu cần.

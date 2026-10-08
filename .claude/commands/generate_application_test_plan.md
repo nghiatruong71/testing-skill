@@ -74,7 +74,7 @@ Workflow này giúp agent tự động khám phá một ứng dụng web, phân 
 
 ### Bước 4: Đóng gói Test Plan (Output — Mode PLAN)
 
-1. Tạo **artifact** `test_plan.md` với cấu trúc:
+1. Tạo file `output/<app>/<YYYY-MM-DD>/test_plan.md` với cấu trúc:
    - **Tổng quan ứng dụng** — mục đích, tech stack (nếu xác định được), URL
    - **Danh sách Modules** — bảng gồm: Module, Mô tả, Risk Level, Số scenarios
    - **User Flows** — mô tả từng flow chính (steps)
@@ -89,7 +89,7 @@ Workflow này giúp agent tự động khám phá một ứng dụng web, phân 
 1. Chuyển test scenarios (Bước 3) thành **manual test cases đầy đủ**:
    - TC ID, Module, Test Title, Pre-conditions, Test Steps, Expected Results, Test Data, Priority
 2. Test Data phải **cụ thể** (không placeholder chung chung)
-3. Xuất dưới dạng bảng Markdown trong artifact
+3. Lưu bảng Markdown vào `output/<app>/<YYYY-MM-DD>/test_cases_<app>.md`, chạy lint + xuất CSV (mục *Kiểm tra & Xuất file* trong skill `rbt_manual_testing`)
 
 ### Bước 6: Sinh Automation Skeleton (Mode FULL)
 
@@ -106,7 +106,7 @@ Workflow này giúp agent tự động khám phá một ứng dụng web, phân 
 ## Output
 
 ### Mode PLAN
-- Artifact `test_plan.md` gồm: App overview, Modules, User Flows, Test Scenarios (có Priority), Automation Candidates
+- File `output/<app>/<YYYY-MM-DD>/test_plan.md` gồm: App overview, Modules, User Flows, Test Scenarios (có Priority), Automation Candidates
 
 ### Mode FULL
 - Tất cả output của Mode PLAN, cộng thêm:

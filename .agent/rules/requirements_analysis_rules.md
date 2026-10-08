@@ -21,6 +21,12 @@ Khi tiếp nhận tài liệu yêu cầu từ người dùng, Agent phải chủ
 * Tránh các từ ngữ chung chung không định lượng được như: *nhanh chóng*, *giao diện đẹp*, *dễ sử dụng*, *thời gian hợp lý*, *dữ liệu lớn*...
 * Cần làm rõ các thông số kỹ thuật cụ thể (Ví dụ: *"thời gian phản hồi dưới 2 giây"*, *"hỗ trợ tải file kích thước tối đa 10MB"*).
 
+### 1.4 Phụ thuộc trạng thái của Thực thể động (Dynamic Entity / State Dependency)
+* Khi một tính năng hoặc vật phẩm phụ thuộc vào một thực thể hoặc trạng thái động có vòng đời (ví dụ: Chiến dịch/Campaign, Sự kiện/Event đang diễn ra, Gói khuyến mãi theo mùa, Trạng thái kích hoạt của hệ thống thứ ba...).
+* Người phân tích phải luôn tự hỏi và làm rõ:
+  * **Trạng thái không tồn tại/Chưa diễn ra/Đã kết thúc:** Nếu tại thời điểm tương tác, thực thể động đó không active, không tồn tại hoặc đã kết thúc, hệ thống sẽ xử lý thế nào? (Ẩn tính năng, báo lỗi, cho phép tích lũy/lưu trữ lượt dùng cho lần sau, hay có phương án thay thế?)
+  * **Chuyển đổi trạng thái giữa chừng:** Điều gì xảy ra nếu thực thể động thay đổi trạng thái (ví dụ: Event kết thúc) ngay trong lúc người dùng đang thao tác dở (ví dụ: đang chọn Outfit ở màn hình claim)?
+
 ---
 
 ## 2. Quy trình đặt câu hỏi Q&A

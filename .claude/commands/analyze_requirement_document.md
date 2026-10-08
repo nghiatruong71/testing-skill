@@ -61,7 +61,7 @@ Nếu user cung cấp mockup/screenshot:
 2. **Liệt kê components** — Tables, forms, modals, buttons, dropdowns, tabs
 3. **Chi tiết fields** — Tên field, loại (input/dropdown/date picker), label, placeholder
 4. **So sánh** mockup với document — phát hiện inconsistency
-5. **Chụp quan sát** vào carousel trong artifact (nếu hình có sẵn)
+5. **Chèn hình quan sát** vào file phân tích (copy hình vào `output/<module>/<YYYY-MM-DD>/assets/`, nếu có)
 
 ### Bước 4: Phân tích Dependencies (Phụ thuộc)
 
@@ -105,11 +105,11 @@ Với mỗi risk, ghi rõ:
 1. **Ma trận trạng thái** (nếu có state transitions) — bảng mapping trạng thái → hành vi
 2. **Checklist AC** — Tóm tắt tất cả AC dạng checkbox, nhóm theo chức năng
 3. **Khuyến nghị kiểm thử** — Gợi ý top 10 điều cần quan tâm nhất khi test
-4. **Xuất Artifact** — Lưu toàn bộ phân tích vào file `.md`
+4. **Lưu file** — Lưu toàn bộ phân tích vào `output/<module>/<YYYY-MM-DD>/requirement_analysis_<module>.md`
 
-## Cấu trúc Output (Template Artifact)
+## Cấu trúc Output (Template)
 
-Agent PHẢI xuất artifact theo cấu trúc sau:
+Agent PHẢI xuất file theo cấu trúc sau:
 
 ```markdown
 # 📋 Phân Tích Requirement: [TICKET-ID]
@@ -162,8 +162,8 @@ Agent PHẢI xuất artifact theo cấu trúc sau:
 - ✅ **PHẢI đọc related tickets** nếu được reference trong AC
 - ✅ **PHẢI phân tích mockup** chi tiết nếu được cung cấp (fields, layout, interactions)
 - ✅ **PHẢI ghi rõ inconsistency** giữa document và mockup
-- ✅ **PHẢI viết bằng Tiếng Việt**, format Markdown, xuất Artifact
-- ✅ **PHẢI copy hình ảnh** vào thư mục artifacts nếu cần embed trong artifact
+- ✅ **PHẢI viết bằng Tiếng Việt**, format Markdown, lưu file trong `output/<module>/<YYYY-MM-DD>/`
+- ✅ **PHẢI copy hình ảnh** vào `output/<module>/<YYYY-MM-DD>/assets/` nếu cần embed trong file phân tích
 
 ## Mối quan hệ với workflows khác
 
